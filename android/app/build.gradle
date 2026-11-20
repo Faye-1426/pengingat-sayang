@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pengingatsayang.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.pengingatsayang.app'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // Kunci tanda tangan tetap, supaya update aplikasi bisa langsung di-install
+    // di atas versi lama tanpa harus uninstall dulu.
+    signingConfigs {
+        tetap {
+            storeFile file('pengingat.keystore')
+            storePassword 'android'
+            keyAlias 'pengingat'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.tetap
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.tetap
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+// Sengaja tanpa library tambahan: semua pakai API bawaan Android.

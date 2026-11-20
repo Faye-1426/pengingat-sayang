@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pengingat Sayang · Admin</title>
+<meta name="theme-color" content="#fff7f8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23e11d48' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#e11d48; --rose-d:#be123c; --rose-s:#ffe4e6; --rose-xs:#fff1f2;
+    --bg:#fff7f8; --card:#ffffff; --ink:#1f1720; --muted:#7a6b70; --line:#f5d0d6;
+    --ok:#15803d; --ok-s:#dcfce7; --warn:#b45309; --warn-s:#fef3c7;
+    --r:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:22px 16px 80px}
+  h1{font-size:26px;margin:0;letter-spacing:-.02em;font-weight:800}
+  h2{font-size:18px;margin:0 0 4px;font-weight:700;letter-spacing:-.01em}
+  p{margin:6px 0}
+  .muted{color:var(--muted)} .small{font-size:13.5px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:14px 0;
+    box-shadow:0 1px 0 rgba(225,29,72,.04),0 8px 24px -16px rgba(190,18,60,.18)}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:40px;height:40px;border-radius:12px;background:var(--rose-s);display:grid;place-items:center;flex:none}
+  label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+  input[type=text],input[type=email],input[type=password],input[type=date],input[type=time],textarea{
+    width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--rose-xs);
+    font:inherit;color:inherit;outline:none;transition:border-color .15s,background .15s}
+  input:focus,textarea:focus{border-color:var(--rose);background:#fff}
+  textarea{resize:vertical;min-height:84px}
+  input[type=time]{min-width:0;font-size:22px;font-weight:700;letter-spacing:.02em}
+  .row{display:flex;gap:10px} .row>*{flex:1;min-width:0}
+  button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:700;transition:transform .05s,background .15s}
+  button:active{transform:scale(.98)}
+  .btn{background:var(--rose);color:#fff}
+  .btn:hover{background:var(--rose-d)}
+  .btn:disabled{opacity:.6;cursor:default}
+  .btn-soft{background:var(--rose-s);color:var(--rose-d)}
+  .btn-ghost{background:transparent;color:var(--muted);padding:8px 10px;font-weight:600}
+  .btn-block{width:100%;margin-top:16px}
+  .seg{display:flex;background:var(--rose-xs);border:1.5px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+  .seg button{flex:1;background:transparent;color:var(--muted);padding:9px 6px;font-size:14px}
+  .seg button.on{background:#fff;color:var(--rose-d);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .days{display:flex;gap:6px;flex-wrap:wrap}
+  .days button{flex:1;min-width:40px;padding:10px 0;background:var(--rose-xs);border:1.5px solid var(--line);color:var(--muted);font-size:14px}
+  .days button.on{background:var(--rose);border-color:var(--rose);color:#fff}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chip{background:var(--rose-xs);border:1px solid var(--line);color:var(--ink);padding:7px 12px;border-radius:999px;font-weight:600;font-size:13.5px}
+  .chip:hover{border-color:var(--rose)}
+  .hidden{display:none!important}
+  .status{display:flex;gap:12px;align-items:flex-start}
+  .dot{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:none;background:#d6cdd0}
+  .dot.ok{background:#22c55e;box-shadow:0 0 0 4px #dcfce7}
+  .dot.warn{background:#f59e0b;box-shadow:0 0 0 4px #fef3c7}
+  details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  details summary::-webkit-details-marker{display:none}
+  .caret{transition:transform .2s;color:var(--muted)} details[open] .caret{transform:rotate(180deg)}
+  .code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;
+    background:var(--rose-xs);border:1px dashed var(--line);padding:12px;border-radius:12px;max-height:110px;overflow:auto;margin-top:10px}
+  #qr{display:flex;justify-content:center;margin:14px 0 4px}
+  #qr img,#qr canvas{background:#fff;padding:10px;border-radius:12px;border:1px solid var(--line)}
+  ol.steps{padding-left:20px;margin:10px 0 0} ol.steps li{margin:6px 0}
+  .item{display:flex;gap:14px;padding:14px 0;border-top:1px solid #f8e3e7}
+  .item:first-child{border-top:0}
+  .when{min-width:74px}
+  .when .t{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .when .r{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+  .body{flex:1;min-width:0}
+  .body .title{font-weight:700;font-size:16px;word-wrap:break-word}
+  .body .msg{color:var(--muted);font-size:14px;margin-top:2px;word-wrap:break-word}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-weight:600;font-size:12px;background:var(--rose-xs);color:var(--rose-d)}
+  .pill.ok{background:var(--ok-s);color:var(--ok)} .pill.warn{background:var(--warn-s);color:var(--warn)}
+  .acts{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .acts .btn-ghost{padding:4px 6px;font-size:13px}
+  .item.off .t,.item.off .title{color:#b8aab0}
+  .switch{position:relative;width:44px;height:26px;flex:none}
+  .switch input{opacity:0;width:0;height:0}
+  .switch span{position:absolute;inset:0;background:#e5d9dc;border-radius:999px;transition:.2s;cursor:pointer}
+  .switch span:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch input:checked+span{background:var(--rose)}
+  .switch input:checked+span:before{transform:translateX(18px)}
+  .group-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:18px 0 2px}
+  .empty{text-align:center;padding:26px 10px;color:var(--muted)}
+  .empty .big{font-size:40px}
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(120%);background:var(--ink);color:#fff;
+    padding:12px 18px;border-radius:14px;font-weight:600;font-size:14.5px;max-width:92vw;transition:transform .25s,opacity .25s;opacity:0;visibility:hidden;z-index:9;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
+  .note{background:var(--warn-s);color:#7c4a03;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:12px}
+  .center{text-align:center}
+  a{color:var(--rose-d)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ SETUP (sekali saja) ============ -->
+  <section id="view-setup" class="hidden">
+    <div class="brand" style="margin:8px 0 6px">
+      <div class="logo">💗</div>
+      <div><h1>Pengingat Sayang</h1><div class="muted small">Setup halaman admin · sekali saja</div></div>
+    </div>
+    <div class="card">
+      <h2>1. Tempel konfigurasi Firebase</h2>
+      <p class="muted small">Dari Firebase Console → ⚙️ Project settings → Your apps → Web app. Salin seluruh blok <code>firebaseConfig</code> lalu tempel di sini.</p>
+      <textarea id="cfgText" rows="8" placeholder='const firebaseConfig = {
+  apiKey: "AIza...",
+  authDomain: "....firebaseapp.com",
+  projectId: "...",
+  ...
+};'></textarea>
+      <h2 style="margin-top:18px">2. Nama kamu</h2>
+      <p class="muted small">Ditampilkan di layar alarm HP pacar, misalnya “💌 dari Budi”.</p>
+      <input id="nameInput" type="text" maxlength="30" placeholder="Nama / panggilan sayang kamu">
+      <button id="saveCfg" class="btn btn-block">Simpan</button>
+    </div>
+  </section>
+
+  <!-- ============ LOGIN ============ -->
+  <section id="view-login" class="hidden">
+    <div class="brand" style="margin:8px 0 6px">
+      <div class="logo">💗</div>
+      <div><h1>Pengingat Sayang</h1><div class="muted small">Masuk sebagai admin</div></div>
+    </div>
+    <form id="loginForm" class="card">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button id="loginBtn" class="btn btn-block" type="submit">Masuk</button>
+      <p class="muted small center" style="margin-top:14px">Akun ini yang kamu buat di Firebase → Authentication → Users.</p>
+    </form>
+    <p class="center"><button id="resetCfg1" class="btn-ghost">Ganti konfigurasi Firebase</button></p>
+  </section>
+
+  <!-- ============ APLIKASI ============ -->
+  <section id="view-app" class="hidden">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">💗</div>
+        <div><h1>Pengingat Sayang</h1><div id="whoami" class="muted small"></div></div>
+      </div>
+      <button id="logoutBtn" class="btn-ghost">Keluar</button>
+    </div>
+
+    <!-- Status HP pacar -->
+    <div class="card">
+      <div class="status">
+        <div id="devDot" class="dot"></div>
+        <div style="flex:1">
+          <div id="devTitle" style="font-weight:700">HP pacar belum terhubung</div>
+          <div id="devSub" class="muted small">Buka panel “Hubungkan HP pacar” di bawah.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hubungkan HP pacar -->
+    <details id="connectBox" class="card">
+      <summary><h2 style="margin:0">📱 Hubungkan HP pacar</h2><span class="caret">▾</span></summary>
+      <ol class="steps small">
+        <li>Install aplikasi <b>Pengingat Sayang</b> di HP pacar (lihat panduan).</li>
+        <li>Kirim kode di bawah ke HP-nya (tombol WhatsApp), atau scan QR pakai kamera HP-nya lalu salin teksnya.</li>
+        <li>Di aplikasi, tekan <b>Tempel dari clipboard</b> → <b>Hubungkan</b>.</li>
+      </ol>
+      <div id="setupCode" class="code"></div>
+      <div class="row" style="margin-top:10px">
+        <button id="copyCode" class="btn-soft">Salin kode</button>
+        <a id="waLink" class="btn-soft" style="text-align:center;text-decoration:none;border-radius:12px;padding:12px 16px;font-weight:700" target="_blank" rel="noopener">Kirim via WhatsApp</a>
+      </div>
+      <div id="qr"></div>
+      <label for="nameEdit">Nama yang tampil di HP pacar</label>
+      <div class="row">
+        <input id="nameEdit" type="text" maxlength="30">
+        <button id="saveName" class="btn-soft" style="flex:none">Simpan</button>
+      </div>
+      <p class="muted small">Kalau nama diganti, kode setup ikut berubah — tempel ulang di HP pacar.</p>
+    </details>
+
+    <!-- Form -->
+    <div class="card" id="formCard">
+      <div class="top"><h2 id="formTitle">➕ Tambah pengingat</h2>
+        <button id="cancelEdit" class="btn-ghost hidden">Batal edit</button></div>
+
+      <label for="fTitle">Judul</label>
+      <input id="fTitle" type="text" maxlength="80" placeholder="Contoh: Minum obat 💊">
+      <div class="chips" id="templates"></div>
+
+      <label for="fMsg">Pesan untuk dia <span class="muted" style="font-weight:500">(opsional)</span></label>
+      <textarea id="fMsg" maxlength="200" rows="2" placeholder="Jangan lupa ya sayang ❤️"></textarea>
+
+      <label>Ulangi</label>
+      <div class="seg" id="repeatSeg">
+        <button type="button" data-v="once" class="on">Sekali</button>
+        <button type="button" data-v="daily">Setiap hari</button>
+        <button type="button" data-v="weekly">Hari tertentu</button>
+      </div>
+
+      <div class="row">
+        <div id="dateWrap"><label for="fDate">Tanggal</label><input id="fDate" type="date"></div>
+        <div><label for="fTime">Jam</label><input id="fTime" type="time" value="08:00"></div>
+      </div>
+
+      <div id="daysWrap" class="hidden">
+        <label>Hari</label>
+        <div class="days" id="daysPick"></div>
+      </div>
+
+      <button id="saveBtn" class="btn btn-block">Simpan pengingat</button>
+      <div id="formNote" class="note hidden"></div>
+    </div>
+
+    <!-- Daftar -->
+    <div class="card">
+      <h2>Daftar pengingat</h2>
+      <div id="list"><div class="empty"><div class="big">⏳</div>Memuat…</div></div>
+    </div>
+
+    <p class="center"><button id="resetCfg2" class="btn-ghost">Ganti konfigurasi Firebase</button></p>
+  </section>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = (id) => document.getElementById(id);
+const LS_CFG = "ps_config_v1", LS_NAME = "ps_name_v1";
+const DAY_NAMES = ["", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+const TEMPLATES = [
+  ["💧 Minum air", "Minum air putih dulu ya sayang 💧"],
+  ["🍱 Makan siang", "Jangan telat makan ya ❤️"],
+  ["💊 Minum obat", "Diminum obatnya ya, biar cepat sehat 🤍"],
+  ["🌅 Bangun pagi", "Selamat pagi sayang ☀️"],
+  ["😴 Waktunya tidur", "Udah malam, istirahat ya 🌙"],
+];
+
+let app, auth, db, user, cfg;
+let reminders = [], unsubList = null, unsubDev = null, device = null;
+let editingId = null, repeat = "once", days = new Set();
+
+// ---------------- util ----------------
+function toast(msg, ms = 3200) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), ms);
+}
+function show(view) {
+  for (const v of ["setup", "login", "app"]) $("view-" + v).classList.toggle("hidden", v !== view);
+}
+function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch {} }
+function pad(n) { return String(n).padStart(2, "0"); }
+function todayStr(d = new Date()) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function errMsg(e) {
+  const c = (e && (e.code || e.message)) || "";
+  if (/invalid-credential|wrong-password|user-not-found|invalid-email/.test(c)) return "Email atau password salah.";
+  if (/too-many-requests/.test(c)) return "Terlalu banyak percobaan. Coba lagi beberapa menit lagi.";
+  if (/operation-not-allowed/.test(c)) return "Login Email/Password belum diaktifkan di Firebase (panduan langkah 1.2).";
+  if (/api-key|invalid-api-key/.test(c)) return "Konfigurasi Firebase salah. Klik “Ganti konfigurasi Firebase”.";
+  if (/permission-denied|insufficient permissions/i.test(c)) return "Ditolak Rules Firestore. Pastikan rules dari panduan sudah di-Publish.";
+  if (/network-request-failed|unavailable/.test(c)) return "Koneksi internet bermasalah.";
+  if (/not-found|failed-precondition/.test(c)) return "Database Firestore belum dibuat (panduan langkah 1.3).";
+  return "Terjadi kesalahan: " + c;
+}
+
+function parseConfig(text) {
+  try { const j = JSON.parse(text); if (j && j.apiKey) return j; } catch {}
+  const out = {}; const re = /([A-Za-z]+)\s*:\s*["'`]([^"'`]+)["'`]/g; let m;
+  while ((m = re.exec(text))) out[m[1]] = m[2];
+  return out;
+}
+
+// ---------------- jadwal (sama persis dengan logika di aplikasi Android) ----------------
+function nextTrigger(r, after = Date.now()) {
+  if (r.active === false) return null;
+  const m = /^(\d{1,2}):(\d{2})$/.exec(r.time || ""); if (!m) return null;
+  const hh = +m[1], mm = +m[2];
+  if (r.repeat === "once") {
+    const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(r.date || ""); if (!d) return null;
+    const t = new Date(+d[1], +d[2] - 1, +d[3], hh, mm, 0, 0).getTime();
+    return t > after ? t : null;
+  }
+  const base = new Date(after);
+  for (let i = 0; i <= 8; i++) {
+    const c = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i, hh, mm, 0, 0);
+    if (c.getTime() <= after) continue;
+    if (r.repeat === "daily") return c.getTime();
+    const iso = c.getDay() === 0 ? 7 : c.getDay();
+    if (r.repeat === "weekly" && (r.days || []).map(Number).includes(iso)) return c.getTime();
+  }
+  return null;
+}
+function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+function fmtWhen(t) {
+  const d = new Date(t), now = new Date();
+  const hm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  if (sameDay(d, now)) return "hari ini " + hm;
+  const tm = new Date(now); tm.setDate(now.getDate() + 1); if (sameDay(d, tm)) return "besok " + hm;
+  const ys = new Date(now); ys.setDate(now.getDate() - 1); if (sameDay(d, ys)) return "kemarin " + hm;
+  return d.toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" }) + " " + hm;
+}
+function ago(t) {
+  const s = Math.round((Date.now() - t) / 1000);
+  if (s < 60) return "baru saja";
+  if (s < 3600) return Math.floor(s / 60) + " menit lalu";
+  if (s < 86400) return Math.floor(s / 3600) + " jam lalu";
+  return Math.floor(s / 86400) + " hari lalu";
+}
+function repeatLabel(r) {
+  if (r.repeat === "daily") return "Setiap hari";
+  if (r.repeat === "weekly") {
+    const ds = (r.days || []).map(Number).sort();
+    if (ds.length === 7) return "Setiap hari";
+    if (ds.join() === "1,2,3,4,5") return "Hari kerja";
+    if (ds.join() === "6,7") return "Akhir pekan";
+    return ds.map((d) => DAY_NAMES[d]).join(", ");
+  }
+  if (r.date) {
+    const [y, mo, da] = r.date.split("-").map(Number);
+    return "Sekali · " + new Date(y, mo - 1, da).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  }
+  return "Sekali";
+}
+
+// ---------------- mulai ----------------
+function boot() {
+  let saved = null;
+  try { saved = JSON.parse(lsGet(LS_CFG) || "null"); } catch {}
+  if (!saved || !saved.apiKey) { show("setup"); return; }
+  cfg = saved;
+  try {
+    app = initializeApp(cfg);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (e) { toast(errMsg(e)); show("setup"); return; }
+  onAuthStateChanged(auth, (u) => {
+    user = u;
+    if (u) enterApp(); else { leaveApp(); show("login"); }
+  });
+}
+
+$("saveCfg").onclick = () => {
+  const c = parseConfig($("cfgText").value);
+  if (!c.apiKey || !c.projectId || !c.appId) { toast("Konfigurasi belum lengkap. Pastikan ada apiKey, projectId, dan appId."); return; }
+  if (!c.authDomain) c.authDomain = c.projectId + ".firebaseapp.com";
+  const name = $("nameInput").value.trim();
+  lsSet(LS_CFG, JSON.stringify({ apiKey: c.apiKey, authDomain: c.authDomain, projectId: c.projectId, appId: c.appId,
+    storageBucket: c.storageBucket || "", messagingSenderId: c.messagingSenderId || "" }));
+  lsSet(LS_NAME, name);
+  location.reload();
+};
+function resetCfg() {
+  if (!confirm("Hapus konfigurasi Firebase dari browser ini? (Data pengingat tidak terhapus.)")) return;
+  lsDel(LS_CFG); location.reload();
+}
+$("resetCfg1").onclick = resetCfg; $("resetCfg2").onclick = resetCfg;
+
+$("loginForm").onsubmit = async (ev) => {
+  ev.preventDefault();
+  const b = $("loginBtn"); b.disabled = true; b.textContent = "Masuk…";
+  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value); }
+  catch (e) { toast(errMsg(e)); }
+  finally { b.disabled = false; b.textContent = "Masuk"; }
+};
+$("logoutBtn").onclick = () => signOut(auth);
+
+function leaveApp() {
+  if (unsubList) { unsubList(); unsubList = null; }
+  if (unsubDev) { unsubDev(); unsubDev = null; }
+}
+
+function enterApp() {
+  show("app");
+  $("whoami").textContent = user.email || "";
+  const col = collection(db, "couples", user.uid, "reminders");
+  leaveApp();
+  unsubList = onSnapshot(col, (snap) => {
+    reminders = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    renderList();
+    if (!reminders.length && !device) $("connectBox").open = true;
+  }, (e) => { $("list").innerHTML = ""; $("list").append(el("div", "empty", errMsg(e))); });
+  unsubDev = onSnapshot(doc(db, "couples", user.uid, "devices", "main"), (snap) => {
+    device = snap.exists() ? snap.data() : null; renderDevice();
+  }, () => {});
+  renderConnect();
+  resetForm();
+}
+
+// ---------------- hubungkan HP pacar ----------------
+function setupCode() {
+  const payload = JSON.stringify({ v: 1, p: cfg.projectId, k: cfg.apiKey, u: user.uid, n: lsGet(LS_NAME) || "" });
+  const bytes = new TextEncoder().encode(payload);
+  let bin = ""; bytes.forEach((b) => (bin += String.fromCharCode(b)));
+  return "PS1:" + btoa(bin);
+}
+function renderConnect() {
+  const code = setupCode();
+  $("setupCode").textContent = code;
+  $("waLink").href = "https://wa.me/?text=" + encodeURIComponent(code);
+  $("nameEdit").value = lsGet(LS_NAME) || "";
+  const q = $("qr"); q.innerHTML = "";
+  if (window.QRCode) new window.QRCode(q, { text: code, width: 220, height: 220, correctLevel: window.QRCode.CorrectLevel.M });
+}
+$("copyCode").onclick = async () => {
+  const code = $("setupCode").textContent;
+  try { await navigator.clipboard.writeText(code); toast("Kode disalin 📋"); }
+  catch {
+    const r = document.createRange(); r.selectNodeContents($("setupCode"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Tekan lama lalu Salin");
+  }
+};
+$("saveName").onclick = () => { lsSet(LS_NAME, $("nameEdit").value.trim()); renderConnect(); toast("Nama disimpan. Tempel ulang kode di HP pacar."); };
+
+function renderDevice() {
+  const dot = $("devDot"), title = $("devTitle"), sub = $("devSub");
+  if (!device || !device.lastSyncAt) {
+    dot.className = "dot"; title.textContent = "HP pacar belum terhubung";
+    sub.textContent = "Buka panel “Hubungkan HP pacar” di bawah."; return;
+  }
+  const t = device.lastSyncAt.toDate ? device.lastSyncAt.toDate().getTime() : Date.parse(device.lastSyncAt);
+  const stale = Date.now() - t > 60 * 60 * 1000;
+  dot.className = "dot " + (stale ? "warn" : "ok");
+  title.textContent = stale ? "HP pacar sudah lama tidak sinkron" : "HP pacar terhubung 💗";
+  sub.textContent = `Sinkron terakhir ${ago(t)} · ${device.model || "Android"} · ${device.reminderCount ?? 0} pengingat diterima` +
+    (stale ? ". Mungkin HP mati/tanpa internet, atau aplikasinya dibatasi penghemat baterai — minta dia buka aplikasinya sekali." : "");
+}
+setInterval(() => { if (user) { renderDevice(); renderList(); } }, 60 * 1000);
+
+// ---------------- form ----------------
+(function buildForm() {
+  const tp = $("templates");
+  for (const [title, msg] of TEMPLATES) {
+    const c = el("button", "chip", title); c.type = "button";
+    c.onclick = () => { $("fTitle").value = title.slice(title.indexOf(" ") + 1) + " " + title.split(" ")[0]; if (!$("fMsg").value) $("fMsg").value = msg; };
+    tp.append(c);
+  }
+  const dp = $("daysPick");
+  for (let d = 1; d <= 7; d++) {
+    const b = el("button", "", DAY_NAMES[d]); b.type = "button"; b.dataset.d = d;
+    b.onclick = () => { days.has(d) ? days.delete(d) : days.add(d); syncDays(); };
+    dp.append(b);
+  }
+  for (const b of $("repeatSeg").querySelectorAll("button")) b.onclick = () => setRepeat(b.dataset.v);
+})();
+function syncDays() { for (const b of $("daysPick").children) b.classList.toggle("on", days.has(+b.dataset.d)); }
+function setRepeat(v) {
+  repeat = v;
+  for (const b of $("repeatSeg").querySelectorAll("button")) b.classList.toggle("on", b.dataset.v === v);
+  $("dateWrap").classList.toggle("hidden", v !== "once");
+  $("daysWrap").classList.toggle("hidden", v !== "weekly");
+}
+function resetForm() {
+  editingId = null;
+  $("formTitle").textContent = "➕ Tambah pengingat";
+  $("cancelEdit").classList.add("hidden");
+  $("fTitle").value = ""; $("fMsg").value = "";
+  $("fDate").value = todayStr(); $("fDate").min = todayStr();
+  const n = new Date(Date.now() + 60 * 60 * 1000); $("fTime").value = `${pad(n.getHours())}:00`;
+  days = new Set([1, 2, 3, 4, 5]); syncDays(); setRepeat("once");
+  $("saveBtn").textContent = "Simpan pengingat";
+}
+$("cancelEdit").onclick = resetForm;
+
+function startEdit(r) {
+  editingId = r.id;
+  $("formTitle").textContent = "✏️ Edit pengingat";
+  $("cancelEdit").classList.remove("hidden");
+  $("fTitle").value = r.title || ""; $("fMsg").value = r.message || "";
+  $("fTime").value = r.time || "08:00";
+  $("fDate").value = r.date || todayStr(); $("fDate").min = "";
+  days = new Set((r.days || []).map(Number)); syncDays();
+  setRepeat(r.repeat || "once");
+  $("saveBtn").textContent = "Simpan perubahan";
+  $("formCard").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+$("saveBtn").onclick = async () => {
+  const title = $("fTitle").value.trim();
+  const time = $("fTime").value;
+  const note = $("formNote"); note.classList.add("hidden");
+  if (!title) { toast("Judul belum diisi"); $("fTitle").focus(); return; }
+  if (!/^\d{2}:\d{2}$/.test(time)) { toast("Jam belum diisi"); return; }
+  const data = {
+    title, message: $("fMsg").value.trim(), time, repeat,
+    date: repeat === "once" ? $("fDate").value : "",
+    days: repeat === "weekly" ? [...days].sort() : [],
+    active: true, updatedAt: serverTimestamp(),
+  };
+  if (repeat === "weekly" && !data.days.length) { toast("Pilih minimal satu hari"); return; }
+  const next = nextTrigger(data);
+  if (!next) { toast("Waktunya sudah lewat. Pilih tanggal/jam yang akan datang."); return; }
+
+  const b = $("saveBtn"); b.disabled = true;
+  try {
+    const col = collection(db, "couples", user.uid, "reminders");
+    if (editingId) await updateDoc(doc(col, editingId), data);
+    else await addDoc(col, { ...data, createdAt: serverTimestamp() });
+    toast(editingId ? "Perubahan disimpan 💗" : "Pengingat ditambahkan 💗");
+    resetForm();
+    if (next - Date.now() < 20 * 60 * 1000) {
+      note.textContent = "⏱️ Bunyinya kurang dari 20 menit lagi. HP pacar mengambil pengingat baru tiap ±15 menit — supaya pasti terkirim, minta dia membuka aplikasinya sebentar (otomatis sinkron).";
+      note.classList.remove("hidden");
+    }
+  } catch (e) { toast(errMsg(e)); }
+  finally { b.disabled = false; }
+};
+
+// ---------------- daftar ----------------
+function ackPill(r) {
+  if (!r.lastAckAt || !r.lastAckAt.toDate) return null;
+  const t = r.lastAckAt.toDate().getTime();
+  const map = {
+    dismissed: ["ok", "✅ Dimatikan dia"],
+    snoozed: ["", "😴 Ditunda 5 menit"],
+    missed: ["warn", "⚠️ Tidak direspons"],
+  };
+  const [cls, label] = map[r.lastAckAction] || ["", "Berbunyi"];
+  return el("span", "pill " + cls, `${label} · ${fmtWhen(t)}`);
+}
+
+function renderList() {
+  const box = $("list"); box.innerHTML = "";
+  if (!reminders.length) {
+    const e = el("div", "empty"); e.append(el("div", "big", "💌"), el("div", "", "Belum ada pengingat. Tambahkan yang pertama di atas!"));
+    box.append(e); return;
+  }
+  const now = Date.now();
+  const rows = reminders.map((r) => ({ r, next: nextTrigger(r, now) }));
+  const upcoming = rows.filter((x) => x.next).sort((a, b) => a.next - b.next);
+  const rest = rows.filter((x) => !x.next).sort((a, b) => (a.r.time || "").localeCompare(b.r.time || ""));
+
+  if (upcoming.length) { box.append(el("div", "group-label", "Akan berbunyi")); upcoming.forEach((x) => box.append(itemRow(x.r, x.next))); }
+  if (rest.length) { box.append(el("div", "group-label", "Nonaktif / sudah lewat")); rest.forEach((x) => box.append(itemRow(x.r, null))); }
+}
+
+function itemRow(r, next) {
+  const row = el("div", "item" + (next ? "" : " off"));
+  const when = el("div", "when"); when.append(el("div", "t", r.time || "--:--"), el("div", "r", repeatLabel(r)));
+  const body = el("div", "body");
+  body.append(el("div", "title", r.title || "(tanpa judul)"));
+  if (r.message) body.append(el("div", "msg", r.message));
+  const meta = el("div", "meta");
+  if (next) meta.append(el("span", "pill", "Berikutnya " + fmtWhen(next)));
+  else if (r.active === false) meta.append(el("span", "pill", "Nonaktif"));
+  else meta.append(el("span", "pill", "Selesai"));
+  const ack = ackPill(r); if (ack) meta.append(ack);
+  body.append(meta);
+
+  const acts = el("div", "acts");
+  const sw = el("label", "switch"); sw.title = "Aktif / nonaktif";
+  const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = r.active !== false;
+  cb.onchange = async () => {
+    try { await updateDoc(doc(db, "couples", user.uid, "reminders", r.id), { active: cb.checked, updatedAt: serverTimestamp() }); }
+    catch (e) { cb.checked = !cb.checked; toast(errMsg(e)); }
+  };
+  sw.append(cb, el("span"));
+  const edit = el("button", "btn-ghost", "Edit"); edit.onclick = () => startEdit(r);
+  const del = el("button", "btn-ghost", "Hapus");
+  del.onclick = async () => {
+    if (!confirm(`Hapus pengingat “${r.title}”?`)) return;
+    try { await deleteDoc(doc(db, "couples", user.uid, "reminders", r.id)); toast("Dihapus"); if (editingId === r.id) resetForm(); }
+    catch (e) { toast(errMsg(e)); }
+  };
+  acts.append(sw, edit, del);
+  row.append(when, body, acts);
+  return row;
+}
+
+boot();
+</script>
+</body>
+</html>

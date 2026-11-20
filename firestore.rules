@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Daftar pengingat. {ownerId} = ID akun kamu (yang login di halaman admin).
+    match /couples/{ownerId}/reminders/{reminderId} {
+      // HP pacar boleh membaca (dia hanya tahu jalurnya lewat kode setup).
+      allow read: if true;
+
+      // Hanya kamu yang boleh menambah / menghapus.
+      allow create, delete: if request.auth != null && request.auth.uid == ownerId;
+
+      // Kamu boleh mengubah apa saja. HP pacar hanya boleh mengisi status
+      // "sudah dimatikan / ditunda / tidak direspons".
+      allow update: if (request.auth != null && request.auth.uid == ownerId)
+        || request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['lastAckAt', 'lastAckAction']);
+    }
+
+    // Laporan dari HP pacar: kapan terakhir sinkron, tipe HP, dll.
+    match /couples/{ownerId}/devices/{deviceId} {
+      allow read, delete: if request.auth != null && request.auth.uid == ownerId;
+      allow create, update: if request.resource.data.keys()
+        .hasOnly(['lastSyncAt', 'model', 'androidVersion', 'appVersion', 'reminderCount']);
+    }
+  }
+}
