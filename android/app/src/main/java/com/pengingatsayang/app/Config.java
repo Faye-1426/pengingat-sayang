@@ -32,6 +32,11 @@ final class Config {
     static String apiKey(Context c) { return prefs(c).getString("apiKey", ""); }
     static String ownerId(Context c) { return prefs(c).getString("ownerId", ""); }
     static String senderName(Context c) { return prefs(c).getString("senderName", ""); }
+    /** App ID web Firebase (kode setup lama belum punya, jadi pakai pengganti). */
+    static String appId(Context c) {
+        String a = prefs(c).getString("appId", "");
+        return a.isEmpty() ? "1:000000000000:android:0000000000000000" : a;
+    }
 
     /** Kode setup dari halaman admin: "PS1:" + base64(JSON {p, k, u, n}). Return null kalau berhasil. */
     static String applySetupCode(Context c, String raw) {
@@ -46,12 +51,14 @@ final class Config {
             String k = o.optString("k", "");
             String u = o.optString("u", "");
             String n = o.optString("n", "");
+            String a = o.optString("a", "");
             if (p.isEmpty() || k.isEmpty() || u.isEmpty()) return "Kode tidak lengkap.";
             prefs(c).edit()
                     .putString("projectId", p)
                     .putString("apiKey", k)
                     .putString("ownerId", u)
                     .putString("senderName", n)
+                    .putString("appId", a)
                     .apply();
             return null;
         } catch (Exception e) {

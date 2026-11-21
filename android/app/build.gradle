@@ -10,8 +10,8 @@ android {
         applicationId 'com.pengingatsayang.app'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1'
     }
 
     // Kunci tanda tangan tetap, supaya update aplikasi bisa langsung di-install
@@ -46,4 +46,8 @@ android {
     }
 }
 
-// Sengaja tanpa library tambahan: semua pakai API bawaan Android.
+dependencies {
+    // Hanya satu library: Firestore, untuk menerima perubahan pengingat secara langsung (realtime).
+    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    implementation 'com.google.firebase:firebase-firestore'
+}

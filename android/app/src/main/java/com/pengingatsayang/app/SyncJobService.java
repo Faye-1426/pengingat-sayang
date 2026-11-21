@@ -9,6 +9,8 @@ public class SyncJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
         new Thread(() -> {
             Scheduler.syncNow(getApplicationContext());
+            // Pastikan sambungan langsung tetap hidup (kalau sempat dimatikan sistem).
+            if (!RealtimeService.connected) RealtimeService.start(getApplicationContext());
             jobFinished(params, false);
         }).start();
         return true;

@@ -148,7 +148,9 @@ Di halaman admin:
 - Saklar di tiap pengingat untuk menonaktifkan sementara; **Edit** / **Hapus**.
 - Di bawah tiap pengingat terlihat status terakhir: ✅ *Dimatikan dia*, 😴 *Ditunda*, atau ⚠️ *Tidak direspons* (alarm berhenti sendiri setelah 10 menit tanpa disentuh).
 
-**Penting soal waktu sampai:** HP pacar mengambil daftar pengingat terbaru **setiap ±15 menit** (batas minimum dari Android) dan setiap kali aplikasinya dibuka. Jadi buat pengingat **minimal 20 menit sebelum jamnya**. Kalau mendadak, minta dia buka aplikasinya sebentar — langsung tersinkron.
+**Sinkron otomatis & langsung:** aplikasi di HP pacar tersambung langsung ke database. Begitu kamu menekan Simpan / Edit / Hapus / saklar, perubahannya masuk ke HP-nya **dalam hitungan detik** — tidak ada tombol sinkron. Kalau sambungan sempat putus (mis. tanpa internet), HP tetap mengecek ulang otomatis tiap ±15 menit dan langsung menyusul begitu online lagi.
+
+Karena tersambung terus, di HP pacar ada **notifikasi kecil "Pengingat Sayang · Tersambung"** (di bagian bawah daftar notifikasi, tanpa suara). Ini wajib dari Android untuk aplikasi yang terus berjalan. Kalau mengganggu, tekan lama notifikasi itu → matikan kategori **"Status sambungan"** — sambungan dan alarm tetap jalan. Pemakaian baterainya sangat kecil (setara aplikasi chat).
 
 Alarm yang sudah tersimpan di HP **tetap bunyi walau tanpa internet**, dan otomatis dipasang ulang setelah HP restart.
 
@@ -158,7 +160,8 @@ Alarm yang sudah tersimpan di HP **tetap bunyi walau tanpa internet**, dan otoma
 
 | Masalah | Solusi |
 |---|---|
-| Status admin: "sudah lama tidak sinkron" | HP mati/tanpa internet, atau aplikasi dibatasi penghemat baterai. Minta dia buka aplikasinya, cek semua ✅ dan Autostart. |
+| Status admin: "sudah lama tidak tersambung" | HP mati/tanpa internet, atau aplikasi dibatasi penghemat baterai. Minta dia buka aplikasinya, cek semua ✅ dan Autostart. |
+| Perubahan tidak langsung masuk | Di aplikasi, bagian bawah harus 🟢 *Tersambung langsung*. Kalau tidak, pastikan baris "Tidak dibatasi penghemat baterai" ✅ dan (HP Xiaomi/Oppo/Vivo dkk.) Autostart aktif. |
 | Alarm tidak bunyi saat HP terkunci | Cek baris "Layar alarm saat HP terkunci" dan "Volume alarm" di aplikasi. Jalankan tes alarm. |
 | Admin: "Ditolak Rules Firestore" | Ulangi langkah 1.4, pastikan klik **Publish**. |
 | Admin: "Email atau password salah" | Cek user di Firebase → Authentication → Users (langkah 1.2). |
@@ -167,6 +170,8 @@ Alarm yang sudah tersimpan di HP **tetap bunyi walau tanpa internet**, dan otoma
 
 **Update aplikasi nanti:** cukup upload file yang diubah ke GitHub → APK baru otomatis dibuat → unduh & instal di atas versi lama (data & kode setup tetap).
 
+**Sudah pernah pasang versi 1.0?** Setelah install versi 1.1, salin ulang **kode setup** dari halaman admin (kodenya sekarang sedikit lebih panjang) dan tempel lagi di aplikasi → **Hubungkan**.
+
 **Catatan kebijakan Android:** mulai 2027, Google bertahap mewajibkan aplikasi yang diinstal dari luar Play Store berasal dari developer terverifikasi. Untuk aplikasi pribadi seperti ini, Google menyediakan akun *limited distribution* gratis (untuk dibagikan ke maksimal 20 perangkat). Aplikasi yang **sudah terinstal** tidak terpengaruh; ini hanya relevan kalau nanti install ulang/update.
 
 ---
@@ -174,7 +179,7 @@ Alarm yang sudah tersimpan di HP **tetap bunyi walau tanpa internet**, dan otoma
 ## Isi folder
 
 ```
-android/            kode aplikasi Android (Java, tanpa library tambahan)
+android/            kode aplikasi Android (Java + library Firestore untuk sinkron langsung)
 web/index.html      halaman admin
 firestore.rules     aturan keamanan database (langkah 1.4)
 .github/workflows/  resep otomatis GitHub: build APK + pasang halaman admin

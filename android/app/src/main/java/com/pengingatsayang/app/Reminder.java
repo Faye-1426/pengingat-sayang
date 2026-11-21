@@ -77,6 +77,35 @@ final class Reminder {
         return r;
     }
 
+    // ---------- dari listener realtime Firestore ----------
+
+    static Reminder fromSnapshot(com.google.firebase.firestore.DocumentSnapshot d) {
+        Reminder r = new Reminder();
+        r.id = d.getId();
+        r.title = asString(d.get("title"), "Pengingat");
+        if (r.title.trim().isEmpty()) r.title = "Pengingat";
+        r.message = asString(d.get("message"), "");
+        r.time = asString(d.get("time"), "");
+        r.date = asString(d.get("date"), "");
+        r.repeat = asString(d.get("repeat"), "once");
+        Object a = d.get("active");
+        r.active = !(a instanceof Boolean) || (Boolean) a;
+        Object days = d.get("days");
+        if (days instanceof java.util.List) {
+            java.util.List<?> l = (java.util.List<?>) days;
+            int[] out = new int[l.size()];
+            int n = 0;
+            for (Object x : l) if (x instanceof Number) out[n++] = ((Number) x).intValue();
+            r.days = new int[n];
+            System.arraycopy(out, 0, r.days, 0, n);
+        }
+        return r;
+    }
+
+    private static String asString(Object o, String def) {
+        return o instanceof String ? (String) o : def;
+    }
+
     private static String str(JSONObject f, String key, String def) {
         JSONObject v = f.optJSONObject(key);
         if (v == null || !v.has("stringValue")) return def;

@@ -15,6 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
             try {
                 Scheduler.scheduleAll(app);
                 Scheduler.ensureSyncJob(app);
+                RealtimeService.start(app);
             } finally {
                 pending.finish();
             }

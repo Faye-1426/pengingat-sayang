@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.ClipData;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -36,6 +39,7 @@ public class MainActivity extends Activity {
     private static final Locale ID = Locale.forLanguageTag("id-ID");
     private boolean syncing = false;
     private String setupDraft = "";
+    private BroadcastReceiver dataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +53,31 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        dataReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                render(); // perubahan dari admin masuk → tampilan ikut berubah
+            }
+        };
+        IntentFilter f = new IntentFilter(RealtimeService.BROADCAST_DATA);
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(dataReceiver, f, Context.RECEIVER_NOT_EXPORTED);
+        else registerReceiver(dataReceiver, f);
+
         render();
         if (Config.isConfigured(this)) {
             Scheduler.ensureSyncJob(this);
+            RealtimeService.start(this);
             syncInBackground(false);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if (dataReceiver != null) {
+            try { unregisterReceiver(dataReceiver); } catch (Exception ignored) { }
+            dataReceiver = null;
+        }
+        super.onPause();
     }
 
     private void syncInBackground(boolean showToast) {
@@ -150,6 +174,8 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Terhubung! 💗", Toast.LENGTH_SHORT).show();
             askNotificationPermission();
             Scheduler.ensureSyncJob(this);
+            RealtimeService.stop(this); // sambung ulang dengan kode yang baru
+            RealtimeService.start(this);
             syncInBackground(false);
         });
         card.addView(connect);
@@ -327,22 +353,22 @@ public class MainActivity extends Activity {
     private LinearLayout footer() {
         LinearLayout box = Ui.vertical(this);
         String status;
-        if (syncing) {
-            status = "Menyinkronkan…";
+        int color = Ui.MUTED;
+        if (RealtimeService.connected) {
+            status = "🟢 Tersambung langsung — perubahan dari admin otomatis masuk";
+            color = Ui.OK;
+        } else if (syncing) {
+            status = "⏳ Menyambungkan…";
         } else {
-            long ok = Config.lastSyncOk(this);
+            status = "⏳ Menyambungkan… (cadangan: dicek otomatis tiap ±15 menit)";
             String err = Config.lastSyncError(this);
-            status = ok == 0 ? "Belum pernah sinkron"
-                    : "Terakhir sinkron: " + formatWhen(ok).replace("Hari ini ", "");
             if (err != null) status += "\n⚠️ " + err;
         }
-        TextView t = Ui.text(this, status, 13, Ui.MUTED, false);
+        long ok = Config.lastSyncOk(this);
+        if (ok > 0) status += "\nTerakhir diperbarui: " + formatWhen(ok);
+        TextView t = Ui.text(this, status, 13, color, false);
         t.setGravity(Gravity.CENTER);
         box.addView(t);
-
-        Button sync = Ui.button(this, "Sinkron sekarang", false);
-        sync.setOnClickListener(v -> syncInBackground(true));
-        box.addView(sync);
 
         TextView reset = Ui.text(this, "Ganti / putuskan kode setup", 13, Ui.MUTED, false);
         reset.setGravity(Gravity.CENTER);
@@ -354,6 +380,7 @@ public class MainActivity extends Activity {
                 .setPositiveButton("Putuskan", (d, w) -> {
                     Scheduler.cancelAll(this);
                     Scheduler.cancelSyncJob(this);
+                    RealtimeService.stop(this);
                     Config.disconnect(this);
                     render();
                 })

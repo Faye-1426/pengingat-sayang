@@ -401,7 +401,7 @@ function enterApp() {
 
 // ---------------- hubungkan HP pacar ----------------
 function setupCode() {
-  const payload = JSON.stringify({ v: 1, p: cfg.projectId, k: cfg.apiKey, u: user.uid, n: lsGet(LS_NAME) || "" });
+  const payload = JSON.stringify({ v: 2, p: cfg.projectId, k: cfg.apiKey, a: cfg.appId, u: user.uid, n: lsGet(LS_NAME) || "" });
   const bytes = new TextEncoder().encode(payload);
   let bin = ""; bytes.forEach((b) => (bin += String.fromCharCode(b)));
   return "PS1:" + btoa(bin);
@@ -433,8 +433,8 @@ function renderDevice() {
   const t = device.lastSyncAt.toDate ? device.lastSyncAt.toDate().getTime() : Date.parse(device.lastSyncAt);
   const stale = Date.now() - t > 60 * 60 * 1000;
   dot.className = "dot " + (stale ? "warn" : "ok");
-  title.textContent = stale ? "HP pacar sudah lama tidak sinkron" : "HP pacar terhubung 💗";
-  sub.textContent = `Sinkron terakhir ${ago(t)} · ${device.model || "Android"} · ${device.reminderCount ?? 0} pengingat diterima` +
+  title.textContent = stale ? "HP pacar sudah lama tidak tersambung" : "HP pacar terhubung 💗";
+  sub.textContent = `Perubahan langsung masuk · terakhir aktif ${ago(t)} · ${device.model || "Android"} · ${device.reminderCount ?? 0} pengingat diterima` +
     (stale ? ". Mungkin HP mati/tanpa internet, atau aplikasinya dibatasi penghemat baterai — minta dia buka aplikasinya sekali." : "");
 }
 setInterval(() => { if (user) { renderDevice(); renderList(); } }, 60 * 1000);
@@ -510,8 +510,9 @@ $("saveBtn").onclick = async () => {
     else await addDoc(col, { ...data, createdAt: serverTimestamp() });
     toast(editingId ? "Perubahan disimpan 💗" : "Pengingat ditambahkan 💗");
     resetForm();
-    if (next - Date.now() < 20 * 60 * 1000) {
-      note.textContent = "⏱️ Bunyinya kurang dari 20 menit lagi. HP pacar mengambil pengingat baru tiap ±15 menit — supaya pasti terkirim, minta dia membuka aplikasinya sebentar (otomatis sinkron).";
+    const t = device && device.lastSyncAt && device.lastSyncAt.toDate ? device.lastSyncAt.toDate().getTime() : 0;
+    if (!t || Date.now() - t > 60 * 60 * 1000) {
+      note.textContent = "ℹ️ HP pacar sedang tidak tersambung, jadi perubahan ini baru masuk saat HP-nya online lagi. Kalau jamnya sudah dekat, minta dia membuka aplikasinya sebentar.";
       note.classList.remove("hidden");
     }
   } catch (e) { toast(errMsg(e)); }

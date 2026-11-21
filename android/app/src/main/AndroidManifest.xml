@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <!-- Alarm tepat waktu: Android 12 pakai SCHEDULE_EXACT_ALARM, Android 13+ pakai USE_EXACT_ALARM -->
     <uses-permission
@@ -47,6 +48,16 @@
             android:name=".AlarmService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
+
+        <!-- Sambungan langsung ke database: perubahan dari admin masuk dalam hitungan detik -->
+        <service
+            android:name=".RealtimeService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Menerima perubahan jadwal pengingat secara langsung dari pengirim" />
+        </service>
 
         <service
             android:name=".SyncJobService"
